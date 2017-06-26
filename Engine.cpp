@@ -18,6 +18,8 @@ using namespace jdb;
 int main( int argc, char* argv[] ) {
 	loguru::add_file("everything.log", loguru::Truncate, loguru::Verbosity_MAX);
 
+	cout << "test: "  << quote( "hello" ) << endl;
+	Logger::setGlobalLogLevel( "none" );
 
 	TaskFactory::registerTaskRunner<PicoDstSkimmer>( "PicoDstSkimmer" );
 
