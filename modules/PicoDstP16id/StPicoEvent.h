@@ -26,7 +26,8 @@ public:
 
   std::vector<unsigned int> triggerIds() const;
   bool                      isTrigger(unsigned int id) const{
-    return std::find(mTriggerIds.begin(), mTriggerIds.end(), id) != mTriggerIds.end();
+    return false;
+    // return std::find(mTriggerIds.begin(), mTriggerIds.end(), id) != mTriggerIds.end();
   }
 
   Int_t    refMultPos() const;
