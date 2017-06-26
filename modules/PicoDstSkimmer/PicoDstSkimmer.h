@@ -69,8 +69,6 @@ protected:
 
 			for ( auto neg : pim ){
 
-				if ( pos->_mtdPid == nullptr && neg->_mtdPid == nullptr ) continue;
-
 				StPhysicalHelixD h2 = neg->_track->helix();
 				StThreeVectorD p2 = h2.momentum( bField );
 				lvn.SetPtEtaPhiM( p2.perp(), p2.pseudoRapidity(), p2.phi(), MASS_PI );
@@ -113,6 +111,7 @@ protected:
 
 				if ( abs(lv.M() - 0.497) < 0.2 ){
 					if ( nullptr != pos->_mtdPid ){
+						book->fill( "mtd_pt_mass", lv.M(), K0pT );
 						book->fill( "posDeltaY", pos->_mtdPid->deltaY() );
 						book->fill( "posDeltaZ", pos->_mtdPid->deltaZ() );
 						book->fill( "posDeltaTOF", pos->_mtdPid->deltaTimeOfFlight() );
@@ -120,6 +119,7 @@ protected:
 					}
 
 					if ( nullptr != neg->_mtdPid ){
+						book->fill( "mtd_pt_mass", lv.M(), K0pT );
 						book->fill( "negDeltaZ", neg->_mtdPid->deltaZ() );
 						book->fill( "negDeltaY", neg->_mtdPid->deltaY() );
 						book->fill( "negDeltaTOF", neg->_mtdPid->deltaTimeOfFlight() );

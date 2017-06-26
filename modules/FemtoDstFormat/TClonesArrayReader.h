@@ -2,7 +2,7 @@
 * @Author: Daniel
 * @Date:   2017-03-29 17:53:01
 * @Last Modified by:   Daniel
-* @Last Modified time: 2017-04-04 10:57:08
+* @Last Modified time: 2017-06-26 18:13:17
 *
 * MIT License
 * 
@@ -30,7 +30,7 @@
 #ifndef FEMTO_TCLONES_ARRAY_READER_H
 #define FEMTO_TCLONES_ARRAY_READER_H
 
-#include "TTRee.h"
+#include "TTree.h"
 #include "TClonesArray.h"
 
 template <class BranchType>

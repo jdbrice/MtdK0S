@@ -38,6 +38,7 @@ java_library_message = '%sCreating Java Archive %s==> %s$TARGET%s' % \
    (colors['red'], colors['purple'], colors['yellow'], colors['end'])
 
 env = Environment(
+  ENV = os.environ,
   CXXCOMSTR = compile_source_message,
   CCCOMSTR = compile_source_message,
   SHCCCOMSTR = compile_shared_source_message,
