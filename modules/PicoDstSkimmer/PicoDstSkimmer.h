@@ -108,72 +108,8 @@ protected:
 
 		TLorentzVector lvp, lvn, lv;
 		for ( auto pos : pip ){
-
-			StPhysicalHelixD h1 = pos->_track->helix();
-			StThreeVectorD p1 = h1.momentum( bField );
-			lvp.SetPtEtaPhiM( p1.perp(), p1.pseudoRapidity(), p1.phi(), MASS_PI );
-			
-
 			for ( auto neg : pim ){
-
-				StPhysicalHelixD h2 = neg->_track->helix();
-				StThreeVectorD p2 = h2.momentum( bField );
-				lvn.SetPtEtaPhiM( p2.perp(), p2.pseudoRapidity(), p2.phi(), MASS_PI );
-
-				lv = lvp + lvn;
-				// book->fill( "pt_mass", lv.M(), lv.perp() );
-
-
-				// continue;
-				pair<double,double> pathLengths = h1.pathLengths(h2);
-
-				StThreeVectorD pNegPosAtDca = h1.at(pathLengths.first);
-				StThreeVectorD pPosPosAtDca = h2.at(pathLengths.second);
-				
-				StThreeVectorD dcaVector = pNegPosAtDca-pPosPosAtDca;
-				StThreeVectorD primVtxPos = _event->primaryVertex();
-				StThreeVectorD secVtxPos = pPosPosAtDca + ( dcaVector * 0.5 );
-				StThreeVectorD decLenVec = secVtxPos - primVtxPos;
-				
-
-				if (decLenVec.mag() < 2.7) continue; // cut on path length
-				if (dcaVector.mag() > 1.5) continue; // cut on track mutual dca
-
-				StThreeVectorD pNegMomAtDca = h1.momentumAt(pathLengths.first, bField );
-				StThreeVectorD pPosMomAtDca = h2.momentumAt(pathLengths.second, bField );
-				StThreeVectorD K0sMomAtDCA = pNegMomAtDca + pPosMomAtDca;
-				lvp.SetPtEtaPhiM( pNegMomAtDca.perp(), pNegMomAtDca.pseudoRapidity(), pNegMomAtDca.phi(), MASS_PI );
-				lvn.SetPtEtaPhiM( pPosMomAtDca.perp(), pPosMomAtDca.pseudoRapidity(), pPosMomAtDca.phi(), MASS_PI );
-				
-
-				double K0pT = lv.Pt();
-				double pointingAngle = K0sMomAtDCA.angle(decLenVec);
-				if (TMath::Abs(pointingAngle) > 0.106+0.056-0.1123*K0pT+0.025*K0pT*K0pT) continue;
-
-
-				// book->fill( "pointingAngle_pt", K0pT, pointingAngle );
-				double openingAngle = pNegMomAtDca.angle(pPosMomAtDca);
-				// book->fill( "openingAngle", openingAngle );
-				book->fill( "pt_mass", lv.M(), K0pT );
-
-				if ( abs(lv.M() - 0.497) < 0.2 ){
-					if ( nullptr != pos->_mtdPid ){
-						book->fill( "mtd_pt_mass", lv.M(), K0pT );
-						book->fill( "posDeltaY", pos->_mtdPid->deltaY() );
-						book->fill( "posDeltaZ", pos->_mtdPid->deltaZ() );
-						book->fill( "posDeltaTOF", pos->_mtdPid->deltaTimeOfFlight() );
-						book->fill( "posCell", pos->_mtdPid->cell() );
-					}
-
-					if ( nullptr != neg->_mtdPid ){
-						book->fill( "mtd_pt_mass", lv.M(), K0pT );
-						book->fill( "negDeltaZ", neg->_mtdPid->deltaZ() );
-						book->fill( "negDeltaY", neg->_mtdPid->deltaY() );
-						book->fill( "negDeltaTOF", neg->_mtdPid->deltaTimeOfFlight() );
-						book->fill( "negCell", neg->_mtdPid->cell() );
-					}
-
-				} // inside K0S signal window
+				TLorentzVector lv = analyzePair( _event, pos, neg );
 				
 			} // loop on pim
 		} // loop on pip
