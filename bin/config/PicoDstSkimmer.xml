@@ -38,6 +38,11 @@
 
 			<Histo name="posDeltaTOF" title="pos; deltaTOF (cm);" bins_x="bins.deltaTOF" />
 			<Histo name="negDeltaTOF" title="neg; deltaTOF (cm);" bins_x="bins.deltaTOF" />
+
+
+
+			<Histo name="tpc_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
+			<Histo name="ls_tpc_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
 		</histograms>
 	</PDS>
 

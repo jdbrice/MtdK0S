@@ -126,21 +126,10 @@ protected:
 						book->fill( "negCell", neg->_mtdPid->cell() );
 					}
 
-					
-					
-
-					
-					
-
-					// book->fill( "pointingAngle_pt", K0pT, pointingAngle );
-					// book->fill( "openingAngle", openingAngle );
-					// book->fill( "secVtx", secVtxPos.mag() );
-					// book->fill( "dcaLenZ", decLenVec.z() ); 
-				}
-
-
-			}
-		}
+				} // inside K0S signal window
+				
+			} // loop on pim
+		} // loop on pip
 
 	}
 

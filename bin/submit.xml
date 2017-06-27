@@ -1,0 +1,25 @@
+<job  name="Pythia_StarSim_BFC"  simulateSubmission ="false" maxFilesPerProcess="50" filesPerHour="5000" >
+
+	<stdout URL="file:/global/project/projectdirs/star/pwg/starlfs/jdb/MtdK0S/log/log_$JOBID.log" />
+	<stderr URL="file:/global/project/projectdirs/star/pwg/starlfs/jdb/MtdK0S/log/err_$JOBID.err" />
+
+	<input URL="filelist:/global/homes/j/jdb12/work/MtdK0S/bin/list.lis" nFiles="5000" />
+
+	<command>
+		cd /global/homes/j/jdb12/work/MtdK0S/bin/
+		./run.sh ${JOBINDEX} ${FILELIST}
+		ls
+	</command>
+
+	<SandBox>
+		<Package>
+			<File>file:./pico.app</File>
+			<File>file:./config</File>
+			<File>file:./run.sh</File>
+		</Package> 
+	</SandBox>
+
+	<Generator> 
+		<Location>/global/project/projectdirs/star/pwg/starlfs/jdb/MtdK0S/gen</Location> 
+	</Generator> 
+</job>
