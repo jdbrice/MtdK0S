@@ -5,7 +5,7 @@
 	<PDS>
 		<EventLoop progress="true" />
 		<input>
-			<dst treeName="PicoDst" url="./list.lis" splitBy="5" maxFiles="-1" nEvents="-1"/>
+			<dst treeName="PicoDst" url="./list.lis" splitBy="1" maxFiles="-1" nEvents="-1"/>
 		</input>
 
 		<output>
@@ -41,8 +41,10 @@
 
 
 
-			<Histo name="tpc_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
-			<Histo name="ls_tpc_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
+			<Histo prefixes=",ls_, lsp_, lsn_" name="tpc_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
+			<Histo prefixes=",ls_, lsp_, lsn_" name="mtd_pt_mass" title="MTD K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
+			<Histo prefixes=",ls_, lsp_, lsn_" name="mtd2_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
+			<!--<Histo name="ls_tpc_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />-->
 
 			<!--<Histo name="tpc_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />-->
 			<!--<Histo name="ls_tpc_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />-->

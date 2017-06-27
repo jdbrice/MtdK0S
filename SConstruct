@@ -3,13 +3,13 @@ import subprocess
 import os
 import platform
 
-SConscript('color_SConscript')
-Import( 'env' )
+# SConscript('color_SConscript')
+# Import( 'env' )
 
 SConscript('color_SConscript')
 Import( 'env' )
 
-# env = Environment()
+# env = Environment(ENV = os.environ )
 SConscript( "modules/PicoDstP16id/SConstruct" )
 SConscript( "modules/StarClassLibrary/SConstruct")
 
@@ -21,6 +21,10 @@ env.Append(CXXFLAGS   = ['-std=c++11'])
 JDB_LIB = os.environ.get("JDB_LIB", "" )
 env.Append(LIBPATH    = [ JDB_LIB + "/lib/" ] )
 env.Append(LIBS       = [ "libRooBarbCore.a", "libRooBarbConfig.a", "libRooBarbTasks.a", "libRooBarbRootAna.a", "libRooBarbUnitTest.a", "libRooBarbExtra.a" ] )
+
+debug = ARGUMENTS.get('debug', 0)
+if int(debug):
+	env.Append(CXXFLAGS = '-g')
 
 # # ROOT
 ROOTCFLAGS      = subprocess.check_output( ['root-config',  '--cflags'] ).rstrip().split( " " )

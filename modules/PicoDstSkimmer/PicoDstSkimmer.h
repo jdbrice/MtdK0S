@@ -65,6 +65,9 @@ protected:
 		TLorentzVector lv;
 		lv.SetPtEtaPhiM( 0, 0, 0, 0 );
 
+		pos->_h = pos->_track->helix();
+		neg->_h = neg->_track->helix();
+
 		pair<double,double> pathLengths = pos->_h.pathLengths(neg->_h);
 
 		StThreeVectorD pNegPosAtDca = pos->_h.at(pathLengths.first);
@@ -86,20 +89,14 @@ protected:
 		pos->_lv.SetPtEtaPhiM( pNegMomAtDca.perp(), pNegMomAtDca.pseudoRapidity(), pNegMomAtDca.phi(), MASS_PI );
 		neg->_lv.SetPtEtaPhiM( pPosMomAtDca.perp(), pPosMomAtDca.pseudoRapidity(), pPosMomAtDca.phi(), MASS_PI );
 
-		lv = pos->_lv + neg->_lv;
-
 		double K0pT = lv.Pt();
 		double pointingAngle = K0sMomAtDCA.angle(decLenVec);
 		if (TMath::Abs(pointingAngle) > 0.106+0.056-0.1123*K0pT+0.025*K0pT*K0pT) return lv;
 
-
-		// book->fill( "pointingAngle_pt", K0pT, pointingAngle );
 		double openingAngle = pNegMomAtDca.angle(pPosMomAtDca);
-		// book->fill( "openingAngle", openingAngle );
-		// book->fill( prefix + "_pt_mass", lv.M(), K0pT );
-
+		
+		lv = pos->_lv + neg->_lv;
 		return lv;
-
 	}
 
 	void analyzePairs( StPicoEvent * _event ){
@@ -110,7 +107,19 @@ protected:
 		for ( auto pos : pip ){
 			for ( auto neg : pim ){
 				TLorentzVector lv = analyzePair( _event, pos, neg );
-				
+				if ( lv.M() <= 0 ) continue;
+
+				book->fill( "tpc_pt_mass", lv.M(), lv.Pt() );
+				if ( nullptr != pos->_mtdPid && nullptr == neg->_mtdPid ){
+					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+				}
+				if ( nullptr != neg->_mtdPid && nullptr == pos->_mtdPid ){
+					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+				}
+				if ( nullptr != pos->_mtdPid &&  nullptr != neg->_mtdPid){
+					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "mtd2_pt_mass", lv.M(), lv.Pt() );
+				}
 			} // loop on pim
 		} // loop on pip
 
@@ -121,7 +130,45 @@ protected:
 				auto p2 = pip[j];
 
 				TLorentzVector lv = analyzePair( _event, p1, p2 );
-				book->fill( "ls_tpc_pt_mass", lv.Pt(), lv.M() );
+				if ( lv.M() <= 0 ) continue;
+				
+				book->fill( "lsp_tpc_pt_mass", lv.M(), lv.Pt() );
+				book->fill( "ls_tpc_pt_mass", lv.M(), lv.Pt() );
+
+				if ( nullptr != p1->_mtdPid && nullptr == p2->_mtdPid ){
+					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+				}
+				if ( nullptr != p2->_mtdPid && nullptr == p1->_mtdPid ){
+					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+				}
+				if ( nullptr != p1->_mtdPid &&  nullptr != p2->_mtdPid){
+					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "mtd2_pt_mass", lv.M(), lv.Pt() );
+				}
+			}
+		}
+
+		for ( size_t i = 0; i < pim.size()-1; i++ ){
+			auto p1 = pim[i];
+			for ( size_t j = i+1; j < pim.size(); j++ ){
+				auto p2 = pim[j];
+
+				TLorentzVector lv = analyzePair( _event, p1, p2 );
+				if ( lv.M() <= 0 ) continue;
+				
+				book->fill( "lsn_tpc_pt_mass", lv.M(), lv.Pt() );
+				book->fill( "ls_tpc_pt_mass", lv.M(), lv.Pt() );
+
+				if ( nullptr != p1->_mtdPid && nullptr == p2->_mtdPid ){
+					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+				}
+				if ( nullptr != p2->_mtdPid && nullptr == p1->_mtdPid ){
+					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+				}
+				if ( nullptr != p1->_mtdPid &&  nullptr != p2->_mtdPid){
+					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "mtd2_pt_mass", lv.M(), lv.Pt() );
+				}
 			}
 		}
 		// ##################### Like-sign #########################
@@ -138,7 +185,8 @@ protected:
 
 		double bField = event->bField() * kilogauss;
 
-		// if ( event->refMult() > 100 ) return;
+		// if ( event->refMult() > 200 ) return;
+		// if ( event->refMult() < 100 ) return;
 
 		auto pVtx = event->primaryVertex();
 
