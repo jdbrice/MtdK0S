@@ -59,6 +59,19 @@ protected:
 	vector< shared_ptr<TrackProxy> > pim;
 
 
+	void fillMTD( shared_ptr<TrackProxy> t, string prefix = "" ){
+		if ( nullptr == t->_mtdPid )
+			return;
+		
+		string chg = "pos";
+		if ( t->_track->charge() < 0 )
+			chg = "neg";
+		book->fill( prefix + chg + "Cell", t->_mtdPid->cell() );
+		book->fill( prefix + chg + "DeltaY", t->_mtdPid->deltaY() );
+		book->fill( prefix + chg + "DeltaZ", t->_mtdPid->deltaY() );
+		book->fill( prefix + chg + "DeltaTOF", t->_mtdPid->deltaTimeOfFlight() );	
+	}
+
 	TLorentzVector analyzePair( StPicoEvent * _event, shared_ptr<TrackProxy> pos, shared_ptr<TrackProxy> neg ){
 		float bField = _event->bField() * kilogauss;
 
@@ -109,16 +122,25 @@ protected:
 				TLorentzVector lv = analyzePair( _event, pos, neg );
 				if ( lv.M() <= 0 ) continue;
 
+				bool is_K0S = fabs( lv.M() - 0.497 ) < 0.02; 
 				book->fill( "tpc_pt_mass", lv.M(), lv.Pt() );
 				if ( nullptr != pos->_mtdPid && nullptr == neg->_mtdPid ){
 					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+					fillMTD( pos );
+					if ( is_K0S ) fillMTD( pos, "sig_" );
 				}
 				if ( nullptr != neg->_mtdPid && nullptr == pos->_mtdPid ){
 					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+					fillMTD( neg );
+					if ( is_K0S ) fillMTD( neg, "sig_" );
 				}
 				if ( nullptr != pos->_mtdPid &&  nullptr != neg->_mtdPid){
 					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
 					book->fill( "mtd2_pt_mass", lv.M(), lv.Pt() );
+					fillMTD( neg );
+					if ( is_K0S ) fillMTD( neg, "sig_" );
+					fillMTD( pos );
+					if ( is_K0S ) fillMTD( pos, "sig_" );
 				}
 			} // loop on pim
 		} // loop on pip
@@ -136,14 +158,14 @@ protected:
 				book->fill( "ls_tpc_pt_mass", lv.M(), lv.Pt() );
 
 				if ( nullptr != p1->_mtdPid && nullptr == p2->_mtdPid ){
-					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "ls_mtd_pt_mass", lv.M(), lv.Pt() );
 				}
 				if ( nullptr != p2->_mtdPid && nullptr == p1->_mtdPid ){
-					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "ls_mtd_pt_mass", lv.M(), lv.Pt() );
 				}
 				if ( nullptr != p1->_mtdPid &&  nullptr != p2->_mtdPid){
-					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
-					book->fill( "mtd2_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "ls_mtd_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "ls_mtd2_pt_mass", lv.M(), lv.Pt() );
 				}
 			}
 		}
@@ -160,14 +182,14 @@ protected:
 				book->fill( "ls_tpc_pt_mass", lv.M(), lv.Pt() );
 
 				if ( nullptr != p1->_mtdPid && nullptr == p2->_mtdPid ){
-					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "ls_mtd_pt_mass", lv.M(), lv.Pt() );
 				}
 				if ( nullptr != p2->_mtdPid && nullptr == p1->_mtdPid ){
-					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "ls_mtd_pt_mass", lv.M(), lv.Pt() );
 				}
 				if ( nullptr != p1->_mtdPid &&  nullptr != p2->_mtdPid){
-					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
-					book->fill( "mtd2_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "ls_mtd_pt_mass", lv.M(), lv.Pt() );
+					book->fill( "ls_mtd2_pt_mass", lv.M(), lv.Pt() );
 				}
 			}
 		}

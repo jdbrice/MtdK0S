@@ -28,16 +28,16 @@
 			<Histo name="pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
 			<Histo name="mtd_pt_mass" title="MTD K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
 
-			<Histo name="posCell" title="poscell" bins_z="bins.cell" />
-			<Histo name="negCell" title="negcell" bins_z="bins.cell" />
-			<Histo name="posDeltaY" title="pos; deltaY (cm);" bins_x="bins.deltaX" />
-			<Histo name="negDeltaY" title="neg; deltaY (cm);" bins_x="bins.deltaX" />
+			<Histo prefixes=",sig_" name="posCell" title="poscell" bins_z="bins.cell" />
+			<Histo prefixes=",sig_" name="negCell" title="negcell" bins_z="bins.cell" />
+			<Histo prefixes=",sig_" name="posDeltaY" title="pos; deltaY (cm);" bins_x="bins.deltaX" />
+			<Histo prefixes=",sig_" name="negDeltaY" title="neg; deltaY (cm);" bins_x="bins.deltaX" />
 
-			<Histo name="posDeltaZ" title="pos; deltaZ (cm);" bins_x="bins.deltaX" />
-			<Histo name="negDeltaZ" title="neg; deltaZ (cm);" bins_x="bins.deltaX" />
+			<Histo prefixes=",sig_" name="posDeltaZ" title="pos; deltaZ (cm);" bins_x="bins.deltaX" />
+			<Histo prefixes=",sig_" name="negDeltaZ" title="neg; deltaZ (cm);" bins_x="bins.deltaX" />
 
-			<Histo name="posDeltaTOF" title="pos; deltaTOF (cm);" bins_x="bins.deltaTOF" />
-			<Histo name="negDeltaTOF" title="neg; deltaTOF (cm);" bins_x="bins.deltaTOF" />
+			<Histo prefixes=",sig_" name="posDeltaTOF" title="pos; deltaTOF (cm);" bins_x="bins.deltaTOF" />
+			<Histo prefixes=",sig_" name="negDeltaTOF" title="neg; deltaTOF (cm);" bins_x="bins.deltaTOF" />
 
 
 
