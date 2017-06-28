@@ -278,6 +278,8 @@ protected:
 		size_t nmup = 0, nmum = 0;
 		pip.clear();
 		pim.clear();
+		mup.clear();
+		mum.clear();
 		size_t ntrk = _rTrack.N();
 		for ( size_t iTrack = 0; iTrack < ntrk; iTrack++ ){
 			StPicoTrack *track = _rTrack.get( iTrack );
@@ -325,7 +327,7 @@ protected:
 			else 
 				pim.push_back( tp );
 
-				
+
 			if ( nullptr != mtdPid )
 				nmtd++;
 			if ( nullptr != mtdPid && track->charge() > 0 )
