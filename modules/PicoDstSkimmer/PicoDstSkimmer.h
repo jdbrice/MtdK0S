@@ -150,8 +150,10 @@ protected:
 		StThreeVectorD secVtxPos = pPosPosAtDca + ( dcaVector * 0.5 );
 		StThreeVectorD decLenVec = secVtxPos - primVtxPos;
 
-		if (decLenVec.mag() < 2.7) return lv; // cut on path length
-		if (dcaVector.mag() > 1.5) return lv; // cut on track mutual dca
+		if ( false == K0SCuts[ "DecayLength" ].inInclusiveRange( decLenVec.mag() ) ) return lv;
+		if ( false == K0SCuts[ "MutualDCA" ].inInclusiveRange( dcaVector.mag() ) ) return lv;
+		// if (decLenVec.mag() < 2.7) return lv; // cut on path length
+		// if (dcaVector.mag() > 1.5) return lv; // cut on track mutual dca
 		
 		StThreeVectorD pNegMomAtDca = pos->_h.momentumAt(pathLengths.first, bField );	// CHECK THIS
 		StThreeVectorD pPosMomAtDca = neg->_h.momentumAt(pathLengths.second, bField );
@@ -162,8 +164,10 @@ protected:
 		neg->_lv.SetPtEtaPhiM( pPosMomAtDca.perp(), pPosMomAtDca.pseudoRapidity(), pPosMomAtDca.phi(), MASS_PI );
 
 		double K0pT = lv.Pt();
-		double pointingAngle = K0sMomAtDCA.angle(decLenVec);
-		if (TMath::Abs(pointingAngle) > 0.106+0.056-0.1123*K0pT+0.025*K0pT*K0pT) return lv;
+		double pointingAngle = cos(K0sMomAtDCA.angle(decLenVec) );
+		if ( false == K0SCuts[ "PointingAngle" ].inInclusiveRange( pointingAngle ) ) return lv;
+		
+		// if (TMath::Abs(pointingAngle) > 0.106+0.056-0.1123*K0pT+0.025*K0pT*K0pT) return lv;
 
 		double openingAngle = pNegMomAtDca.angle(pPosMomAtDca);
 		
@@ -179,12 +183,13 @@ protected:
 		for ( auto pos : pip ){
 			for ( auto neg : pim ){
 				if ( false == tpcOnlyPairs && nullptr == pos->_mtdPid && nullptr == neg->_mtdPid ) continue;
+				fillMuMu( pos, neg );
 
 				TLorentzVector lv = analyzePair( _event, pos, neg );
 				if ( lv.M() <= 0 ) continue;
 
 				fillPiPi( pos, neg, lv, "" );
-				fillMuMu( pos, neg );
+				
 				fillMTD( pos, neg, lv );
 			} // loop on pim
 		} // loop on pip
@@ -260,6 +265,7 @@ protected:
 		auto pVtx = event->primaryVertex();
 
 		size_t nmtd = 0;
+		size_t nmup = 0, nmum = 0;
 		pip.clear();
 		pim.clear();
 		size_t ntrk = _rTrack.N();
@@ -301,6 +307,10 @@ protected:
 				pim.push_back( tp );
 			if ( nullptr != mtdPid )
 				nmtd++;
+			if ( nullptr != mtdPid && track->charge() > 0 )
+				nmup++;
+			if ( nullptr != mtdPid && track->charge() < 0 )
+				nmum++;
 			
 		}
 
@@ -311,21 +321,13 @@ protected:
 
 		analyzePairs( event );
 
-		// LOG_IF_F( INFO, DEBUG, "#pi+=%lu, #pi-=%lu, #mtd=%lu", pip.size(), pim.size(), nmtd );
 		book->fill( "n_pip", pip.size() );
 		book->fill( "n_pim", pim.size() );
 
-		// LOG_IF_F( INFO, DEBUG, "RunId: %d", event->runId() );
-		// LOG_IF_F( INFO, DEBUG, "#Tracks: %u", _rTrack.N() );
-		// LOG_IF_F( INFO, DEBUG, "#MtdHits: %u", _rMtdHit.N() );
-		// LOG_IF_F( INFO, DEBUG, "#MtdPids: %u", _rMtdPid.N() );
+		book->fill( "n_mup", nmup );
+		book->fill( "n_mum", nmum );
 
-		// size_t n = event->triggerIds().size();
-
-		// LOG_IF_F( INFO, DEBUG, "# of trigger Ids = %lu", n );
-		// for ( unsigned int id : event->triggerIds() ){
-		// 	LOG_IF_F( INFO, DEBUG, "id: %lu", id );
-		// } 
+		
 
 
 	}
