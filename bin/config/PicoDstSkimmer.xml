@@ -23,6 +23,7 @@
 		<!-- Event -->
 			<Histo name="n_" suffixes="pip, pim" titles="# #pi^{+}, # #pi^{-}" bins_x="bins.n_pi" />
 			<Histo name="n_" suffixes="mup, mum" titles="# #mu^{+}, # #mu^{-}" bins_x="bins.n_mu" />
+			<Histo name="n_mup_mum" title=";# Muon+;# Muon-" bins_x="bins.n_mu" bins_y="bins.n_mu" />
 		<!-- Track -->
 			<Histo name="nHitsFit" title=";nHitsFit; dN/dnHitsFit" bins_x="bins.nHitsFit" />
 			<Histo name="nHitsRatio" title=";nHitsRatio; dN/dnHitsRatio" bins_x="bins.nHitsRatio" />
@@ -57,7 +58,7 @@
 
 	<bins>
 		<n_pi width="1" min="0" max="600" />
-		<n_mu width="1" min="0" max="25" />
+		<n_mu width="1" min="0" max="10" />
 		<nHitsFit width="1" min="-50" max="50" />
 		<nHitsRatio width="0.02" min="-1.1" max="1.1" />
 		<gMom width="0.05" min="0" max="5" />

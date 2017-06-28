@@ -71,6 +71,9 @@ protected:
 	vector< shared_ptr<TrackProxy> > pip;
 	vector< shared_ptr<TrackProxy> > pim;
 
+	vector< shared_ptr<TrackProxy> > mup;
+	vector< shared_ptr<TrackProxy> > mum;
+
 
 	void fillMTD( shared_ptr<TrackProxy> t1, shared_ptr<TrackProxy> t2, TLorentzVector &lv ){
 		bool is_K0S = fabs( lv.M() - 0.497 ) < 0.02;
@@ -179,11 +182,10 @@ protected:
 
 		float bField = _event->bField() * kilogauss;
 
-		TLorentzVector lvp, lvn, lv;
+		// ####### K0S Pion candidates #########
 		for ( auto pos : pip ){
 			for ( auto neg : pim ){
 				if ( false == tpcOnlyPairs && nullptr == pos->_mtdPid && nullptr == neg->_mtdPid ) continue;
-				fillMuMu( pos, neg );
 
 				TLorentzVector lv = analyzePair( _event, pos, neg );
 				if ( lv.M() <= 0 ) continue;
@@ -193,6 +195,14 @@ protected:
 				fillMTD( pos, neg, lv );
 			} // loop on pim
 		} // loop on pip
+
+		// ####### Muon candidates #########
+		for ( auto pos : mup ){
+			for ( auto neg : mum ){
+				fillMuMu( pos, neg );
+			}
+		}
+
 
 		// ##################### Like-sign #########################
 		if ( false == makeLikeSign )
@@ -289,9 +299,10 @@ protected:
 			if ( gP <= 0 ) continue;
 			float gDCA = track->globalDCA( bField, pVtx );
 			// book->fill( "gDCA", gDCA );
-			if ( gDCA < 1.3 || gDCA > 9 ) continue;
 			if ( abs( track->nSigmaPion() ) > 3.0 ) continue;
 			
+
+
 			auto tp = shared_ptr<TrackProxy>( new TrackProxy() );
 			tp->_track = track;
 			tp->_mtdPid = mtdPid;
@@ -300,11 +311,21 @@ protected:
 			tp->_p = tp->_h.momentum( bField );
 			tp->_lv.SetPtEtaPhiM( tp->_p.perp(), tp->_p.pseudoRapidity(), tp->_p.phi(), MASS_PI );
 		
+			if ( gDCA < 1.5 && nullptr != mtdPid ){
+				if ( track->charge() > 0 )
+					mup.push_back( tp );
+				else 
+					mum.push_back( tp );
+			}
+
+			if ( false == K0SCuts[ "DaughterDCA" ].inInclusiveRange( gDCA ) ) continue;
 
 			if ( track->charge() > 0 )
 				pip.push_back( tp );
 			else 
 				pim.push_back( tp );
+
+				
 			if ( nullptr != mtdPid )
 				nmtd++;
 			if ( nullptr != mtdPid && track->charge() > 0 )
@@ -326,7 +347,7 @@ protected:
 
 		book->fill( "n_mup", nmup );
 		book->fill( "n_mum", nmum );
-
+		book->fill( "n_mup_mum", nmup, nmum );
 		
 
 
