@@ -6,6 +6,7 @@
 #include "FemtoDstFormat/TClonesArrayReader.h"
 
 #include "TreeAnalyzer.h"
+#include "XmlRange.h"
 
 #include "PicoDstP16id/StPicoEvent.h"
 #include "PicoDstP16id/StPicoMtdHit.h"
@@ -49,8 +50,17 @@ public:
 		_rMtdPid.setup( this->chain, "MtdPidTraits" );
 		_rBTofPid.setup( this->chain, "BTofPidTraits" );
 
+		vector<string> kids = config.childrenOf( nodePath + ".K0S", "XmlRange" );
+		for ( auto p : kids ){
+			XmlRange  xr( config, p );
+			LOG_F( INFO, "[%s] = %s", config[ p +":name" ].c_str(), xr.toString().c_str()  );
+			K0SCuts[ config[ p +":name" ] ] = xr;
+		}
+
 	}
 protected:
+
+	map< string, XmlRange > K0SCuts;
 
 	TClonesArrayReader < StPicoEvent        > _rEvent;
 	TClonesArrayReader < StPicoMtdHit       > _rMtdHit;
