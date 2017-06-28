@@ -59,7 +59,7 @@
 		<angle width="0.1" min="-3.2" max="6.4" />
 		<pt width="0.05" min="0" max="10.0" />
 		<mass width="0.005" min="0" max="1.2" />
-		<mass width="0.005" min="2.7" max="3.5" />
+		<jpsi_mass width="0.005" min="2.7" max="3.5" />
 
 		<deltaX width="0.05" min="-100" max="100" />
 		<deltaTOF width="0.1" min="-5" max="5" />
