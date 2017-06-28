@@ -28,20 +28,21 @@
 			<Histo name="openingAngle" title="openingAngle" bins_x="bins.angle" />
 
 		<!-- MTD variables -->
-			<Histo prefixes=",k0s_" name="posCell" title="poscell" bins_x="bins.pt" bins_y="bins.cell" />
-			<Histo prefixes=",k0s_" name="negCell" title="negcell" bins_x="bins.pt" bins_y="bins.cell" />
-			<Histo prefixes=",k0s_" name="posDeltaY" title="pos; deltaY (cm);" bins_x="bins.pt" bins_y="bins.deltaX" />
-			<Histo prefixes=",k0s_" name="negDeltaY" title="neg; deltaY (cm);" bins_x="bins.pt" bins_y="bins.deltaX" />
-			<Histo prefixes=",k0s_" name="posDeltaZ" title="pos; deltaZ (cm);" bins_x="bins.pt" bins_y="bins.deltaX" />
-			<Histo prefixes=",k0s_" name="negDeltaZ" title="neg; deltaZ (cm);" bins_x="bins.pt" bins_y="bins.deltaX" />
-			<Histo prefixes=",k0s_" name="posDeltaTOF" title="pos; deltaTOF (cm);" bins_x="bins.pt" bins_y="bins.deltaTOF" />
-			<Histo prefixes=",k0s_" name="negDeltaTOF" title="neg; deltaTOF (cm);" bins_x="bins.pt" bins_y="bins.deltaTOF" />
+			<Histo prefixes=",k0s_,jpsi_" name="posCell" title="poscell" bins_x="bins.pt" bins_y="bins.cell" />
+			<Histo prefixes=",k0s_,jpsi_" name="negCell" title="negcell" bins_x="bins.pt" bins_y="bins.cell" />
+			<Histo prefixes=",k0s_,jpsi_" name="posDeltaY" title="pos; deltaY (cm);" bins_x="bins.pt" bins_y="bins.deltaX" />
+			<Histo prefixes=",k0s_,jpsi_" name="negDeltaY" title="neg; deltaY (cm);" bins_x="bins.pt" bins_y="bins.deltaX" />
+			<Histo prefixes=",k0s_,jpsi_" name="posDeltaZ" title="pos; deltaZ (cm);" bins_x="bins.pt" bins_y="bins.deltaX" />
+			<Histo prefixes=",k0s_,jpsi_" name="negDeltaZ" title="neg; deltaZ (cm);" bins_x="bins.pt" bins_y="bins.deltaX" />
+			<Histo prefixes=",k0s_,jpsi_" name="posDeltaTOF" title="pos; deltaTOF (cm);" bins_x="bins.pt" bins_y="bins.deltaTOF" />
+			<Histo prefixes=",k0s_,jpsi_" name="negDeltaTOF" title="neg; deltaTOF (cm);" bins_x="bins.pt" bins_y="bins.deltaTOF" />
 
 
 		<!-- Pair p_T vs Mass -->
 			<Histo prefixes=",ls_, lsp_, lsn_" name="tpc_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
 			<Histo prefixes=",ls_, lsp_, lsn_" name="mtd_pt_mass" title="MTD K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
 			<Histo prefixes=",ls_, lsp_, lsn_" name="mtd2_pt_mass" title="K^{0}_{S}; M_{#pi#pi} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.mass" bins_y="bins.pt" />
+			<Histo name="mumu_pt_mass" title="MTD; M_{#mu#mu} (GeV/c^{2}); p_{T} (GeV/c)" bins_x="bins.jpsi_mass" bins_y="bins.pt" />
 			
 		</histograms>
 	</PDS>
@@ -58,7 +59,7 @@
 		<angle width="0.1" min="-3.2" max="6.4" />
 		<pt width="0.05" min="0" max="10.0" />
 		<mass width="0.005" min="0" max="1.2" />
-
+		<mass width="0.005" min="2.7" max="3.5" />
 
 		<deltaX width="0.05" min="-100" max="100" />
 		<deltaTOF width="0.1" min="-5" max="5" />

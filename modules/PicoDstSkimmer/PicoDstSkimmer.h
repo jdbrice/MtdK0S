@@ -89,16 +89,35 @@ protected:
 	void fillPiPi( shared_ptr<TrackProxy> t1, shared_ptr<TrackProxy> t2, TLorentzVector &lv, string prefix = "" ){
 		
 		if ( tpcOnlyPairs )
-			book->fill( "tpc_pt_mass", lv.M(), lv.Pt() );
+			book->fill( prefix + "tpc_pt_mass", lv.M(), lv.Pt() );
 		
 		if ( nullptr != t1->_mtdPid && nullptr == t2->_mtdPid ){
-			book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+			book->fill( prefix + "mtd_pt_mass", lv.M(), lv.Pt() );
 		}
 		if ( nullptr != t2->_mtdPid && nullptr == t1->_mtdPid ){
-			book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+			book->fill( prefix + "mtd_pt_mass", lv.M(), lv.Pt() );
 		}
 		if ( nullptr != t1->_mtdPid &&  nullptr != t2->_mtdPid){
-			book->fill( "mtd2_pt_mass", lv.M(), lv.Pt() );
+			book->fill( prefix + "mtd2_pt_mass", lv.M(), lv.Pt() );
+		}
+	}
+
+	void fillMuMu( shared_ptr<TrackProxy> t1, shared_ptr<TrackProxy> t2, string prefix = "" ){
+		if ( nullptr == t1->_mtdPid || nullptr == t2->_mtdPid )
+			return;
+		
+
+		TLorentzVector lv1, lv2, lv;
+		lv1.SetPtEtaPhiM( t1->_track->pMom().perp(), t1->_track->pMom().pseudoRapidity(), t1->_track->pMom().phi(), MASS_MU );
+		lv2.SetPtEtaPhiM( t2->_track->pMom().perp(), t2->_track->pMom().pseudoRapidity(), t2->_track->pMom().phi(), MASS_MU );
+
+		lv = lv1 + lv2;
+
+		book->fill( "mumu_pt_mass", lv.M(), lv.Pt() );
+
+		if ( fabs( lv.M() - 3.096 ) < 0.1 ){
+			fillMTD( t1, "jpsi_" );
+			fillMTD( t2, "jpsi_" );
 		}
 	}
 
@@ -155,6 +174,7 @@ protected:
 				if ( lv.M() <= 0 ) continue;
 
 				fillPiPi( pos, neg, lv, "" );
+				fillMuMu( pos, neg );
 				fillMTD( pos, neg, lv );
 			} // loop on pim
 		} // loop on pip
