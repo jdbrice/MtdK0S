@@ -1,11 +1,11 @@
 #ifndef PICO_DST_SKIMMER_H
 #define PICO_DST_SKIMMER_H
 
-#include "TreeAnalyzer.h"
 
 #include "FemtoDstFormat/BranchReader.h"
 #include "FemtoDstFormat/TClonesArrayReader.h"
 
+#include "TreeAnalyzer.h"
 
 #include "PicoDstP16id/StPicoEvent.h"
 #include "PicoDstP16id/StPicoMtdHit.h"
@@ -22,6 +22,9 @@ class PicoDstSkimmer : public TreeAnalyzer
 public:
 
 	const float MASS_PI = 0.13957; // in GeV
+	const float MASS_MU = 0.105658; // in GeV
+	bool tpcOnlyPairs = false;
+	bool makeLikeSign = false;
 
 	struct TrackProxy {
 		StPicoTrack * _track = nullptr;
@@ -59,6 +62,15 @@ protected:
 	vector< shared_ptr<TrackProxy> > pim;
 
 
+	void fillMTD( shared_ptr<TrackProxy> t1, shared_ptr<TrackProxy> t2, TLorentzVector &lv ){
+		bool is_K0S = fabs( lv.M() - 0.497 ) < 0.02;
+		fillMTD( t1 );
+		if ( is_K0S ) 
+			fillMTD( t1, "k0s_" );
+		fillMTD( t2 );
+		if ( is_K0S ) 
+			fillMTD( t2, "k0s_" );
+	}
 	void fillMTD( shared_ptr<TrackProxy> t, string prefix = "" ){
 		if ( nullptr == t->_mtdPid )
 			return;
@@ -66,10 +78,28 @@ protected:
 		string chg = "pos";
 		if ( t->_track->charge() < 0 )
 			chg = "neg";
-		book->fill( prefix + chg + "Cell", t->_mtdPid->cell() );
-		book->fill( prefix + chg + "DeltaY", t->_mtdPid->deltaY() );
-		book->fill( prefix + chg + "DeltaZ", t->_mtdPid->deltaY() );
-		book->fill( prefix + chg + "DeltaTOF", t->_mtdPid->deltaTimeOfFlight() );	
+			
+		book->fill( prefix + chg + "Cell", t->_track->gPt(), t->_mtdPid->cell() );
+		book->fill( prefix + chg + "DeltaY", t->_track->gPt(), t->_mtdPid->deltaY() );
+		book->fill( prefix + chg + "DeltaZ", t->_track->gPt(), t->_mtdPid->deltaZ() );
+		book->fill( prefix + chg + "DeltaTOF", t->_track->gPt(), t->_mtdPid->deltaTimeOfFlight() );	
+
+	}
+
+	void fillPiPi( shared_ptr<TrackProxy> t1, shared_ptr<TrackProxy> t2, TLorentzVector &lv, string prefix = "" ){
+		
+		if ( tpcOnlyPairs )
+			book->fill( "tpc_pt_mass", lv.M(), lv.Pt() );
+		
+		if ( nullptr != t1->_mtdPid && nullptr == t2->_mtdPid ){
+			book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+		}
+		if ( nullptr != t2->_mtdPid && nullptr == t1->_mtdPid ){
+			book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
+		}
+		if ( nullptr != t1->_mtdPid &&  nullptr != t2->_mtdPid){
+			book->fill( "mtd2_pt_mass", lv.M(), lv.Pt() );
+		}
 	}
 
 	TLorentzVector analyzePair( StPicoEvent * _event, shared_ptr<TrackProxy> pos, shared_ptr<TrackProxy> neg ){
@@ -119,33 +149,20 @@ protected:
 		TLorentzVector lvp, lvn, lv;
 		for ( auto pos : pip ){
 			for ( auto neg : pim ){
+				if ( false == tpcOnlyPairs && nullptr == pos->_mtdPid && nullptr == neg->_mtdPid ) continue;
+
 				TLorentzVector lv = analyzePair( _event, pos, neg );
 				if ( lv.M() <= 0 ) continue;
 
-				bool is_K0S = fabs( lv.M() - 0.497 ) < 0.02; 
-				book->fill( "tpc_pt_mass", lv.M(), lv.Pt() );
-				if ( nullptr != pos->_mtdPid && nullptr == neg->_mtdPid ){
-					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
-					fillMTD( pos );
-					if ( is_K0S ) fillMTD( pos, "sig_" );
-				}
-				if ( nullptr != neg->_mtdPid && nullptr == pos->_mtdPid ){
-					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
-					fillMTD( neg );
-					if ( is_K0S ) fillMTD( neg, "sig_" );
-				}
-				if ( nullptr != pos->_mtdPid &&  nullptr != neg->_mtdPid){
-					book->fill( "mtd_pt_mass", lv.M(), lv.Pt() );
-					book->fill( "mtd2_pt_mass", lv.M(), lv.Pt() );
-					fillMTD( neg );
-					if ( is_K0S ) fillMTD( neg, "sig_" );
-					fillMTD( pos );
-					if ( is_K0S ) fillMTD( pos, "sig_" );
-				}
+				fillPiPi( pos, neg, lv, "" );
+				fillMTD( pos, neg, lv );
 			} // loop on pim
 		} // loop on pip
 
 		// ##################### Like-sign #########################
+		if ( false == makeLikeSign )
+			return;
+
 		for ( size_t i = 0; i < pip.size()-1; i++ ){
 			auto p1 = pip[i];
 			for ( size_t j = i+1; j < pip.size(); j++ ){
