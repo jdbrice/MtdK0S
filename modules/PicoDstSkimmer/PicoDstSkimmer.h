@@ -17,6 +17,7 @@
 #include "vendor/loguru.h"
 
 #include "TLorentzVector.h"
+#include "TNamed.h"
 
 class PicoDstSkimmer : public TreeAnalyzer
 {
@@ -350,8 +351,17 @@ protected:
 		book->fill( "n_mup", nmup );
 		book->fill( "n_mum", nmum );
 		book->fill( "n_mup_mum", nmup, nmum );
-		
+	
+	}
 
+
+	virtual void postEventLoop(){
+		TreeAnalyzer::postEventLoop();
+
+		if ( config.getInt( "jobIndex" ) <= 0 ){
+			TNamed config_str( "config", config.toXml() );
+			config_str.Write();
+		}
 
 	}
 	
